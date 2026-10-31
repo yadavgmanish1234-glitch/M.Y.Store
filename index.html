@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>M.Y Store • Modern Marketplace</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="tail-container bg-gray-50 text-gray-900">
+
+   <nav class="bg-white border-b sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto">
+            <div class="px-6 py-4 flex items-center justify-between">
+                <div class="flex items-center gap-x-3 cursor-pointer" onclick="navigateTo('home')">
+                   <img src="https://i.pinimg.com/1200x/5f/8c/cd/5f8ccd0baf378bd4668bbe6be729e481.jpg" alt="Logo" class="w-9 h-9 object-contain rounded-xl">
+                    <div>
+                        <span class="logo-font text-3xl font-bold tracking-tight">M.Y Store</span>
+                    </div>
+                </div>
+
+                <div class="hidden md:flex flex-1 max-w-xl mx-8">
+                    <div class="relative w-full">
+                        <input id="search-input" type="text" placeholder="Search products..." 
+                               class="w-full bg-gray-100 border border-gray-300 focus:border-yellow-400 focus:ring-0 rounded-3xl py-3 px-6 pl-14 text-sm outline-none transition-all">
+                        <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-x-8">
+                    <a onclick="navigateTo('home')" class="cursor-pointer hidden md:flex items-center gap-x-1.5 text-sm font-medium hover:text-yellow-600 transition-colors">
+                        <i class="fa-solid fa-house"></i><span>Home</span>
+                    </a>
+                    <a onclick="navigateTo('shop')" class="cursor-pointer hidden md:flex items-center gap-x-1.5 text-sm font-medium hover:text-yellow-600 transition-colors">
+                        <i class="fa-solid fa-store"></i><span>Shop</span>
+                    </a>
+                    <a onclick="navigateTo('favorites')" class="cursor-pointer hidden md:flex items-center gap-x-1.5 text-sm font-medium hover:text-yellow-600 transition-colors">
+                        <i class="fa-solid fa-heart"></i><span>Favorites</span>
+                    </a>
+                    <a onclick="toggleAdminView()" class="cursor-pointer hidden md:flex items-center gap-x-1.5 text-sm font-medium text-emerald-600 hover:text-emerald-700 transition-colors">
+                        <i class="fa-solid fa-shield-halved"></i><span>Admin</span>
+                    </a>
+                    
+                    <button onclick="toggleCart()" class="relative flex items-center gap-x-2 text-gray-700 hover:text-black transition-colors">
+                        <i class="fa-solid fa-shopping-bag text-2xl"></i>
+                        <span id="cart-count" class="absolute -top-1.5 -right-1.5 bg-red-500 text-white text-[10px] font-mono w-5 h-5 flex items-center justify-center rounded-full">0</span>
+                    </button>
+
+                    <div class="relative inline-block text-left">
+                        <button onclick="handleUserMenuClick()" title="Account" class="flex items-center gap-x-2 text-sm font-medium hover:text-yellow-600 transition-colors">
+                            <i class="fa-solid fa-user text-xl"></i>
+                            <span id="user-display-name">Login</span>
+                        </button>
+                        
+                        <div id="user-dropdown" class="hidden absolute right-0 mt-2 w-64 bg-white border rounded-2xl shadow-xl z-[150] overflow-hidden text-gray-700">
+                            <div class="bg-gray-50 p-3 border-b">
+                                <span class="text-[10px] font-bold text-gray-400 block uppercase mb-1">Switch Profiles</span>
+                                <div id="dropdown-profile-switches" class="space-y-1"></div>
+                            </div>
+                            <div class="divide-y divide-gray-100 max-h-[350px] overflow-y-auto">
+                                <button onclick="showOrdersPage()" class="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3"><i class="fa-solid fa-box text-gray-400"></i> My Orders</button>
+                                <button onclick="showManageAccountPage()" class="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3"><i class="fa-solid fa-user-gear text-gray-400"></i> Manage Account & Addresses</button>
+                                <button onclick="showPaymentPage()" class="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3"><i class="fa-solid fa-wallet text-gray-400"></i> Payment & Currencies</button>
+                                <button onclick="showEarnPage()" class="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3"><i class="fa-solid fa-gift text-gray-400"></i> Earn & Redeem (MyPrices)</button>
+                                <button onclick="showPage('Help Center')" class="w-full text-left px-4 py-3 text-sm hover:bg-gray-50 flex items-center gap-3"><i class="fa-solid fa-circle-question text-gray-400"></i> Help Center</button>
+                            </div>
+                            <button onclick="processLogout()" class="w-full text-left px-4 py-3 text-sm hover:bg-red-50 text-red-600 border-t flex items-center gap-2"><i class="fa-solid fa-sign-out text-red-500"></i> Logout</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div id="category-bar" class="bg-white border-t">
+            <div class="max-w-7xl mx-auto px-6">
+                <div id="category-filters" class="flex items-center gap-x-2 py-4 text-sm overflow-x-auto whitespace-nowrap"></div>
+            </div>
+        </div>
+    </nav>
+     
+    <div id="mobile-search-bar" class="md:hidden w-full bg-white border-b px-6 py-3">
+        <div class="relative">
+            <input id="search-input-mobile" type="text" placeholder="Search products..." 
+                   class="w-full bg-gray-100 border border-gray-300 focus:border-yellow-400 rounded-3xl py-3 px-6 pl-14 text-sm outline-none">
+            <i class="fa-solid fa-magnifying-glass absolute left-5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+        </div>
+    </div>
+
+    <div id="main-view">
+       <section id="home-section" class="relative h-[80vh] w-full overflow-hidden bg-gray-900 text-white">
+    <!-- Image Slides Container -->
+    <div id="hero-slider-container" class="absolute inset-0 w-full h-full flex transition-transform duration-700 ease-in-out">
+        <!-- Slides will be automatically injected here by JavaScript -->
+    </div>
+
+    <!-- Left & Right Arrow Buttons -->
+
+    <button onclick="navigateHeroSlider(-1)" type="button" aria-label="Previous slide" title="Previous slide" class="absolute left-4 top-1/2 -translate-y-1/2 z-30 bg-black/40 hover:bg-black/70 text-white w-12 h-12 rounded-full flex items-center justify-center text-xl transition-colors">
+        <i class="fa-solid fa-chevron-left" aria-hidden="true"></i>
+    </button>
+  
+
+    <!-- Slide Indicators Dots -->
+    <div id="hero-slider-dots" class="absolute bottom-6 left-1/2 -translate-y-0 -translate-x-1/2 z-30 flex gap-2"></div>
+</section> 
+        <section class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex justify-between items-end mb-10">
+                    <div>
+                        <span class="uppercase text-yellow-600 text-sm tracking-widest font-medium">Discover</span>
+                        <h2 class="text-5xl font-semibold tracking-tight">Shop by Category</h2>
+                    </div>
+                    <a onclick="navigateTo('shop')" class="text-sm flex items-center gap-x-2 hover:text-yellow-600 cursor-pointer">
+                        Browse all <i class="fa-solid fa-arrow-right"></i>
+                    </a>
+                </div>
+                <div id="category-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6"></div>
+            </div>
+        </section>
+
+        <section id="shop-section" class="py-20 bg-gray-50">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12">
+                    <div>
+                        <h2 id="shop-title" class="text-5xl font-semibold tracking-tight">Featured Products</h2>
+                        <p id="results-count" class="text-gray-500 mt-2">Showing all products</p>
+                    </div>
+                    <select id="sort-select" title="Sort products" onchange="filterProducts()" 
+                            class="bg-white border border-gray-300 rounded-3xl px-6 py-3 text-sm focus:outline-none focus:border-yellow-400 mt-4 md:mt-0">
+                        <option value="default">Sort by Relevance</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Best Rated</option>
+                    </select>
+                </div>
+                <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8"></div>
+            </div>
+        </section>
+
+        <footer class="bg-gray-900 text-gray-400 py-20">
+            <div class="max-w-7xl mx-auto px-6">
+                <div class="grid md:grid-cols-5 gap-12">
+                    <div class="md:col-span-2">
+                        <div class="flex items-center gap-x-3 text-white mb-6">
+                           <img src="https://i.pinimg.com/1200x/5f/8c/cd/5f8ccd0baf378bd4668bbe6be729e481.jpg" alt="Logo" class="w-9 h-9 object-contain rounded-xl"> 
+                            <span class="logo-font text-4xl font-bold tracking-tighter text-white">M.Y Store</span>
+                        </div>
+                        <p class="max-w-xs">Premium shopping experience with products you'll love and service you'll remember.</p>
+                        <div class="flex gap-x-6 mt-8 text-2xl">
+    <a href="https://www.instagram.com/_mani_sh_yadav___?igsh=MWQ3am4ydnlwMnJseg==" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors" title="Instagram">
+        <i class="fa-brands fa-instagram"></i>
+    </a>
+    <a href="https://x.com/yourusername" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors" title="X (Twitter)">
+        <i class="fa-brands fa-x-twitter"></i>
+    </a>
+    <a href="https://facebook.com/yourusername" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors" title="Facebook">
+        <i class="fa-brands fa-facebook"></i>
+    </a>
+    <a href="https://youtube.com/yourchannel" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors" title="YouTube">
+        <i class="fa-brands fa-youtube"></i>
+    </a>
+</div>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-white mb-6">Shop</h4>
+                        <ul class="space-y-3 text-sm">
+                            <li onclick="showPage('New Arrivals')" class="hover:text-white cursor-pointer">New Arrivals</li>
+                            <li onclick="showPage('Best Sellers')" class="hover:text-white cursor-pointer">Best Sellers</li>
+                            <li onclick="showPage('Deals')" class="hover:text-white cursor-pointer">Deals</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-white mb-6">Support</h4>
+                        <ul class="space-y-3 text-sm">
+                            <li onclick="showPage('Contact Us')" class="hover:text-white cursor-pointer">Contact Us</li>
+                            <li onclick="showPage('Shipping Policy')" class="hover:text-white cursor-pointer">Shipping Policy</li>
+                            <li onclick="showPage('Returns')" class="hover:text-white cursor-pointer">Returns</li>
+                            <li onclick="showPage('FAQs')" class="hover:text-white cursor-pointer">FAQs</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 class="font-medium text-white mb-6">Company</h4>
+                        <ul class="space-y-3 text-sm">
+                            <li onclick="showPage('About Us')" class="hover:text-white cursor-pointer">About Us</li>
+                            <li onclick="showPage('Careers')" class="hover:text-white cursor-pointer">Careers</li>
+                            <li onclick="showPage('Blog')" class="hover:text-white cursor-pointer">Blog</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-gray-800 mt-16 pt-8 text-xs flex flex-col md:flex-row justify-between items-center gap-y-4">
+                    <div>© 2026 M.Y Store. All rights reserved.</div>
+                    <div class="flex gap-x-6">
+                        <span onclick="showPage('Privacy Policy')" class="cursor-pointer hover:text-white">Privacy</span>
+                        <span onclick="showPage('Terms & Conditions')" class="cursor-pointer hover:text-white">Terms</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+    <div id="admin-view" class="hidden min-h-screen bg-gray-100 py-10">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-center mb-8 bg-white p-6 rounded-3xl shadow-sm">
+                <div>
+                    <h2 class="text-3xl font-bold tracking-tight">Admin Dashboard</h2>
+                    <p class="text-gray-500 mt-1">Manage your store's inventory and products.</p>
+                </div>
+                <button onclick="openAdminModal()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-3 rounded-2xl font-semibold transition-colors flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Add Product
+                </button>
+            </div>
+
+            <div class="bg-white rounded-3xl shadow-sm overflow-hidden">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-gray-50 border-b text-sm text-gray-500 uppercase tracking-wider">
+                                <th class="p-5 font-semibold">Product</th>
+                                <th class="p-5 font-semibold">Category</th>
+                                <th class="p-5 font-semibold">Price</th>
+                                <th class="p-5 font-semibold">Status</th>
+                                <th class="p-5 font-semibold text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-product-table" class="divide-y divide-gray-100">
+                            </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="max-w-7xl mx-auto mb-8 bg-white p-6 rounded-3xl shadow-sm mt-8">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800"><i class="fa-solid fa-images text-yellow-500"></i> Manage Slideshow Offers</h3>
+                <div class="grid md:grid-cols-5 gap-4 items-end bg-gray-50 p-4 rounded-2xl border" id="admin-banner-form">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">IMAGE URL</label>
+                        <input type="text" id="adv-img" placeholder="https://..." class="w-full text-xs p-2.5 border rounded-xl bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">BADGE LABEL</label>
+                        <input type="text" id="adv-badge" placeholder="e.g. 50% OFF" class="w-full text-xs p-2.5 border rounded-xl bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">OFFER TITLE HEADLINE</label>
+                        <input type="text" id="adv-title" placeholder="Festive Sale" class="w-full text-xs p-2.5 border rounded-xl bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">DESCRIPTION SUBTITLE</label>
+                        <input type="text" id="adv-desc" placeholder="Details about this discount..." class="w-full text-xs p-2.5 border rounded-xl bg-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 mb-1">TARGET CATEGORY LINK</label>
+                        <select id="adv-category" title="Select banner category" aria-label="Select banner category" class="w-full text-xs p-2.5 border rounded-xl bg-white outline-none">
+                            <option value="All">All Products</option>
+                            <option value="Electronics">Electronics</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Home">Home</option>
+                            <option value="Beauty">Beauty</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Kids">Kids</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end gap-2 mt-3">
+                    <button onclick="saveAdminBanner()" class="bg-black text-white px-5 py-2 rounded-xl text-sm font-semibold hover:bg-gray-800 transition-colors">Add / Save Slider Banner</button>
+                </div>
+                <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t" id="admin-banners-list"></div>
+            </div>
+
+            <div class="max-w-7xl mx-auto mb-8 bg-red-50 border-2 border-red-200 p-6 rounded-3xl shadow-sm mt-8">
+                <h3 class="text-xl font-bold mb-4 flex items-center gap-2 text-red-800"><i class="fa-solid fa-wrench text-red-500"></i> Data Recovery & Debug Tools</h3>
+                <p class="text-sm text-red-700 mb-4">⚠️ Use these tools if products are missing or showing old deleted items:</p>
+                <div class="space-y-2">
+                    <button onclick="debugStorageData()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2 justify-center">
+                        <i class="fa-solid fa-magnifying-glass"></i> Check Storage Status & Show Data
+                    </button>
+                    <button onclick="clearAndResetProducts()" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2 justify-center">
+                        <i class="fa-solid fa-arrow-rotate-left"></i> Clear & Reset All Products to Default
+                    </button>
+                    <button onclick="refreshAllData()" class="w-full bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl font-semibold transition-colors flex items-center gap-2 justify-center">
+                        <i class="fa-solid fa-arrow-rotate-right"></i> Force Refresh & Reload Page
+                    </button>
+                </div>
+            </div>
+
+        </div> </div> 
+            </div>
+        </div>
+    </div>
+    <div id="product-modal" class="hidden fixed inset-0 bg-black/70 z-[100] flex items-center justify-center p-4">
+    <div class="bg-white max-w-5xl w-full rounded-3xl overflow-hidden flex flex-col md:flex-row max-h-[90vh]">
+        
+        <div class="w-full md:w-1/2 bg-gray-100 p-4 flex items-center justify-center">
+            <div id="modal-image" class="w-full"></div>
+        </div>
+        
+        <div class="flex-1 p-8 overflow-y-auto border-l border-gray-100">
+            <div class="flex justify-between items-start">
+                <div>
+                    <div id="modal-category" class="uppercase text-xs tracking-widest text-yellow-600 font-medium"></div>
+                    <h2 id="modal-name" class="text-3xl font-semibold mt-1"></h2>
+                </div>
+                <button onclick="closeModal()" class="text-3xl text-gray-400 hover:text-gray-600 hidden md:block">×</button>
+            </div>
+            <div id="modal-price" class="text-4xl font-semibold mt-4"></div>
+            <div class="flex items-center gap-x-2 mt-3">
+                <div id="modal-stars" class="flex text-yellow-400">★★★★★</div>
+                <span id="modal-rating" class="text-sm text-gray-500"></span>
+            </div>
+            <p id="modal-description" class="mt-6 text-gray-600 leading-relaxed"></p>
+            
+            <div id="modal-sizes-container" class="mt-6">
+                <p class="text-xs font-semibold tracking-widest text-gray-500 mb-3 uppercase">Select Size</p>
+                <div class="flex gap-x-3" id="size-selector-row">
+                    <button onclick="selectSize(this, 'S')" class="size-btn w-11 h-11 border rounded-xl flex items-center justify-center text-sm font-semibold hover:border-black transition-all">S</button>
+                    <button onclick="selectSize(this, 'M')" class="size-btn w-11 h-11 border rounded-xl flex items-center justify-center text-sm font-semibold hover:border-black transition-all">M</button>
+                    <button onclick="selectSize(this, 'L')" class="size-btn w-11 h-11 border rounded-xl flex items-center justify-center text-sm font-semibold hover:border-black transition-all">L</button>
+                    <button onclick="selectSize(this, 'XL')" class="size-btn w-11 h-11 border rounded-xl flex items-center justify-center text-sm font-semibold hover:border-black transition-all">XL</button>
+                </div>
+            </div>
+
+            <div class="mt-6 p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                <div class="text-xs text-gray-400">Total Price Value (Inclusive of all taxes)</div>
+                <div class="text-sm font-medium text-gray-700 mt-1">Maximum Retail Price (MRP): <span class="line-through text-gray-400" id="modal-mrp">$120</span></div>
+            </div>
+
+            <div class="flex gap-4 mt-6">
+                <button onclick="addCurrentToCart()" class="flex-1 bg-white border border-black hover:bg-gray-50 text-black py-4 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2 transition-all">
+                    <i class="fa-solid fa-cart-plus"></i> ADD TO CART
+                </button>
+                <button onclick="buyCurrentNow()" class="flex-1 bg-yellow-400 hover:bg-yellow-500 text-black py-4 rounded-3xl font-semibold text-sm flex items-center justify-center gap-x-2 transition-all">
+                    <i class="fa-solid fa-bolt"></i> BUY NOW
+                </button>
+            </div>
+
+            <div class="mt-8 border-t pt-6">
+                <h4 class="text-sm font-bold text-gray-900 tracking-wide uppercase mb-3">Delivery &amp; Services</h4>
+                <div class="flex gap-2">
+                    <input id="delivery-address-input" type="text" placeholder="Enter Destination Shipping Address..." class="flex-1 border rounded-xl px-4 py-2.5 text-sm outline-none focus:border-yellow-400">
+                    <button onclick="verifyAndSaveAddress()" class="bg-black hover:bg-gray-800 text-white text-xs font-semibold px-4 rounded-xl transition-all">SAVE</button>
+                </div>
+                <p id="saved-address-msg" class="text-xs text-emerald-600 font-medium mt-2 hidden"></p>
+
+                <div class="grid grid-cols-2 gap-4 mt-4 text-xs text-gray-600">
+                    <div class="p-3 bg-gray-50 rounded-xl flex items-start gap-2">
+                        <i class="fa-solid fa-truck text-yellow-600 mt-0.5"></i>
+                        <div>
+                            <span class="font-semibold block text-gray-900">Estimated Delivery</span>
+                            <span id="est-delivery-date">Expected within 3-5 days</span>
+                        </div>
+                    </div>
+                    <div class="p-3 bg-gray-50 rounded-xl flex items-start gap-2">
+                        <i class="fa-solid fa-hand-holding-dollar text-emerald-600 mt-0.5"></i>
+                        <div>
+                            <span class="font-semibold block text-gray-900">Pay on Delivery</span>
+                            <span>Available for this location</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mt-3 p-3 bg-yellow-50/50 border border-yellow-100 rounded-xl flex items-center gap-2 text-xs text-amber-800">
+                    <i class="fa-solid fa-rotate-left"></i>
+                    <span><strong>Hassle-free 7 Days Return &amp; Exchange:</strong> Applicable post order receipt.</span>
+                </div>
+            </div>
+
+                <div class="mt-10 border-t pt-8">
+                    <h3 class="text-xl font-semibold mb-6">Customer Reviews</h3>
+                    <div id="comments-list" class="space-y-4 mb-8"></div>
+                    
+                    <div class="bg-gray-50 p-6 rounded-2xl border">
+                        <h4 class="font-medium mb-3">Leave a Review</h4>
+                        <select id="review-score" title="Select review rating" aria-label="Select review rating" class="mb-4 p-3 border border-gray-300 rounded-xl w-full text-sm focus:outline-none focus:border-yellow-400">
+                            <option value="5">★★★★★ - Excellent</option>
+                            <option value="4">★★★★☆ - Good</option>
+                            <option value="3">★★★☆☆ - Average</option>
+                            <option value="2">★★☆☆☆ - Poor</option>
+                            <option value="1">★☆☆☆☆ - Terrible</option>
+                        </select>
+                        <textarea id="comment-input" placeholder="Write your experience with this product..." rows="3" class="w-full p-4 border border-gray-300 rounded-xl text-sm focus:outline-none focus:border-yellow-400"></textarea>
+                        <button onclick="submitReview()" class="mt-3 w-full bg-yellow-400 hover:bg-yellow-500 text-black py-3 rounded-xl font-semibold text-sm transition-colors">Submit Review</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="hidden fixed top-0 right-0 h-full w-full md:w-96 bg-white shadow-2xl z-[200] cart-slide translate-x-full">
+        <div class="h-full flex flex-col">
+            <div class="flex items-center justify-between p-6 border-b">
+                <h3 class="text-2xl font-semibold">Your Cart</h3>
+                <button onclick="toggleCart()" class="text-4xl text-gray-400 hover:text-gray-600">×</button>
+            </div>
+            <div id="cart-items" class="flex-1 overflow-auto p-6 space-y-6"></div>
+            <div class="p-6 border-t bg-gray-50">
+                <div class="flex justify-between text-sm mb-2">
+                    <span class="text-gray-500">Subtotal</span>
+                    <span id="cart-subtotal" class="font-medium">$0</span>
+                </div>
+                <div class="flex justify-between text-sm mb-6">
+                    <span class="text-gray-500">Shipping</span>
+                    <span class="text-emerald-600 font-medium">FREE</span>
+                </div>
+                <div class="flex justify-between text-xl font-semibold mb-8">
+                    <span>Total</span>
+                    <span id="cart-total">$0</span>
+                </div>
+                <button onclick="checkout()" class="w-full bg-black hover:bg-gray-800 transition-colors py-5 rounded-3xl text-lg font-semibold text-white">
+                    PROCEED TO CHECKOUT
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="admin-product-modal" class="hidden fixed inset-0 bg-black/60 z-[300] flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-2xl rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="admin-modal-title" class="text-2xl font-bold">Add New Product</h2>
+                <button onclick="closeAdminModal()" class="text-3xl text-gray-400 hover:text-gray-600">×</button>
+            </div>
+            
+            <form id="admin-form" onsubmit="saveAdminProduct(event)" class="space-y-4">
+                <input type="hidden" id="admin-id">
+                
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Product Name *</label>
+                    <input type="text" id="admin-name" required title="Product name" aria-label="Product name" placeholder="Enter product name" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Price ($) *</label>
+                        <input type="number" id="admin-price" step="0.01" required title="Product price" aria-label="Product price" placeholder="0.00" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+                        <select id="admin-category" required title="Product category" aria-label="Product category" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+                            <option value="Electronics">Electronics</option>
+                            <option value="Fashion">Fashion</option>
+                            <option value="Home">Home</option>
+                            <option value="Beauty">Beauty</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Kids">Kids</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Subcategory (Optional)</label>
+                    <input type="text" id="admin-subcategory" placeholder="e.g., Men, Women, Kids" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Image URLs (Comma separated) *</label>
+                    <textarea id="admin-images" required rows="2" placeholder="https://image1.jpg, https://image2.jpg" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500"></textarea>
+                    <p class="text-xs text-gray-500 mt-1">Add multiple links separated by commas for a scrolling gallery.</p>
+                </div>
+                <div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Product Video URL (Optional)</label>
+    <input type="text" id="admin-video" placeholder="https://example.com/video.mp4" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+    <p class="text-xs text-gray-500 mt-1">Paste a direct link to an MP4 video here.</p>
+</div>
+<div class="grid grid-cols-2 gap-4">
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Brand Name</label>
+        <input type="text" id="admin-brand" placeholder="e.g., Sony, Nike" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
+        <input type="number" id="admin-stock" placeholder="e.g., 15" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+    </div>
+</div>
+
+<div class="grid grid-cols-2 gap-4">
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Material / Highlights</label>
+        <input type="text" id="admin-material" placeholder="e.g., 100% Leather, Plastic" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+    </div>
+    <div>
+        <label class="block text-sm font-medium text-gray-700 mb-1">Warranty Details</label>
+        <input type="text" id="admin-warranty" placeholder="e.g., 1 Year Manufacturer Warranty" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+    </div>
+</div>
+<!-- NEW SIZE TYPE DROPDOWN -->
+<div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Size Type Variant *</label>
+    <select id="admin-size-type" required title="Size type" aria-label="Size type" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+        <option value="none">No Sizes (Default)</option>
+        <option value="clothing">Clothing (S, M, L, XL)</option>
+        <option value="shoes">Shoes (UK 6 to 12)</option>
+    </select>
+</div>
+
+<!-- NEW COLORS TEXTBOX -->
+<div>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Available Colors (Comma separated)</label>
+    <input type="text" id="admin-colors" placeholder="e.g., Red, Black, Blue" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500">
+</div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Description *</label>
+                    <textarea id="admin-description" required rows="3" title="Product description" aria-label="Product description" placeholder="Describe the product" class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:outline-none focus:border-emerald-500"></textarea>
+                </div>
+
+                <div class="flex items-center gap-2 mt-2">
+                    <input type="checkbox" id="admin-isnew" title="Mark as new arrival" aria-label="Mark as new arrival" class="w-5 h-5 text-emerald-600 rounded">
+                    <label for="admin-isnew" class="text-sm font-medium text-gray-700">Mark as "New Arrival"</label>
+                </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="button" onclick="closeAdminModal()" class="flex-1 py-3 border border-gray-300 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-colors">Cancel</button>
+                    <button type="submit" class="flex-1 py-3 bg-emerald-600 text-white rounded-xl font-medium hover:bg-emerald-700 transition-colors">Save Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+   <div id="auth-modal" class="hidden fixed inset-0 bg-black/60 z-[300] flex items-center justify-center">
+    <div class="bg-white w-full max-w-md mx-4 rounded-3xl p-8 max-h-[90vh] overflow-y-auto">
+        <div class="flex justify-between items-center mb-6">
+            <h2 id="auth-title" class="text-3xl font-semibold">Sign in</h2>
+            <button onclick="closeAuthModal()" class="text-4xl text-gray-300 hover:text-gray-500">×</button>
+        </div>
+        
+        <div class="space-y-4">
+            <div id="register-fields" class="hidden space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="text-xs font-semibold tracking-wider text-gray-500">FIRST NAME</label>
+                        <input id="auth-firstname" type="text" placeholder="John" class="w-full border rounded-xl px-4 py-2.5 mt-1 focus:border-yellow-400 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold tracking-wider text-gray-500">LAST NAME</label>
+                        <input id="auth-lastname" type="text" placeholder="Doe" class="w-full border rounded-xl px-4 py-2.5 mt-1 focus:border-yellow-400 text-sm outline-none">
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <div class="col-span-2">
+                        <label class="text-xs font-semibold tracking-wider text-gray-500">PHONE NUMBER</label>
+                        <input id="auth-phone" type="tel" placeholder="9876543210" class="w-full border rounded-xl px-4 py-2.5 mt-1 focus:border-yellow-400 text-sm outline-none">
+                    </div>
+                    <div>
+                        <label class="text-xs font-semibold tracking-wider text-gray-500">AGE</label>
+                        <input id="auth-age" type="number" placeholder="24" class="w-full border rounded-xl px-4 py-2.5 mt-1 focus:border-yellow-400 text-sm outline-none">
+                    </div>
+                </div>
+            </div>
+            
+            <div>
+                <label class="text-xs font-semibold tracking-wider text-gray-500">EMAIL ADDRESS</label>
+                <input id="auth-email" type="email" placeholder="alex@example.com" class="w-full border rounded-xl px-4 py-3 mt-1 focus:border-yellow-400 text-sm outline-none">
+            </div>
+            <div>
+                <label class="text-xs font-semibold tracking-wider text-gray-500">PASSWORD</label>
+                <input id="auth-password" type="password" placeholder="••••••••" class="w-full border rounded-xl px-4 py-3 mt-1 focus:border-yellow-400 text-sm outline-none">
+            </div>
+            <button onclick="processAuth()" id="auth-submit-btn" class="w-full py-3.5 bg-black hover:bg-gray-800 text-white rounded-xl font-medium text-base mt-2 transition-colors">
+                SIGN IN
+            </button>
+        </div>
+        
+        <div class="mt-6 text-center text-sm text-gray-500">
+            <span id="auth-toggle-text">Don't have an account?</span> 
+            <button onclick="toggleAuthMode()" id="auth-toggle-btn" class="text-black font-semibold hover:underline">Register here</button>
+        </div>
+    </div>
+</div> 
+
+    <div id="generic-modal" class="hidden fixed inset-0 bg-black/70 z-[400] flex items-center justify-center">
+        <div class="bg-white w-full max-w-2xl mx-4 rounded-3xl p-8 max-h-[80vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-6">
+                <h2 id="generic-title" class="text-3xl font-semibold"></h2>
+                <button onclick="closePage()" class="text-4xl text-gray-300 hover:text-gray-500">×</button>
+            </div>
+            <div id="generic-content" class="text-gray-600 leading-relaxed prose"></div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

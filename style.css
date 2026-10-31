@@ -1,0 +1,77 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap');
+
+:root {
+    --primary: 234 179 8;
+}
+
+.tail-container {
+    font-family: 'Inter', system_ui, sans-serif;
+}
+
+.logo-font {
+    font-family: 'Playfair Display', sans-serif;
+}
+
+.product-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.product-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+
+.cart-slide {
+    transition: transform 0.4s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.category-btn {
+    transition: all 0.2s;
+}
+
+/* Hide scrollbar for image slider in modal */
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+}
+
+/* Heart Animation */
+.heart i {
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.heart:hover i {
+    transform: scale(1.1);
+}
+.heart i.active {
+    animation: pop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.4); }
+    100% { transform: scale(1); }
+}
+
+@media (max-width: 768px) {
+    .product-card img {
+        height: 220px;
+    }
+    h1 {
+        font-size: 2.5rem;
+    }
+    #product-grid {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1rem;
+    }
+}
